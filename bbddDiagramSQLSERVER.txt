@@ -1,0 +1,61 @@
+CREATE TABLE MetodosPago (
+    MetodoPagoID INT PRIMARY KEY IDENTITY(1,1),
+    TipoPago VARCHAR(50) NOT NULL,
+    DescripcionMetodo VARCHAR(100) NOT NULL,
+);
+
+CREATE TABLE EntidadBancaria(
+    BancoID INT PRIMARY KEY IDENTITY(1,1),
+    NombreBanco varchar(50) NOT NULL,
+    Direccion varchar(255),
+    Ciudad varchar(50),
+    Telefono varchar(20),
+);
+
+CREATE TABLE Clientes (
+    ClienteID INT PRIMARY KEY IDENTITY(1,1),
+    Nombre varchar(50) NOT NULL,
+    Apellido varchar(50),
+    Direccion varchar(255),
+    Ciudad varchar(50),
+    Telefono varchar,
+);
+
+
+-- Crear la tabla Pagos de Clientes
+CREATE TABLE PagosClientes (
+    ID_PagoCliente INT PRIMARY KEY,
+    NombreCliente VARCHAR(100),
+    NumeroIdentificacion VARCHAR(20),
+    Monto DECIMAL(10, 2),
+    FechaPago DATE,
+    Clientes_ClienteID INT,
+    Foreign Key (Clientes_ClienteID) References Clientes(ClienteID),
+);
+
+-- Crear la tabla Transacciones Conciliadas
+CREATE TABLE TransaccionesConciliadas (
+    ID_TransaccionConciliada INT PRIMARY KEY,
+    FechaTransaccion DATE,
+    Descripcion TEXT,
+    Monto DECIMAL(10, 2),
+    EstadoConciliacion VARCHAR(50),
+    MetodosPago_MetodoPagoID INT,
+    Foreign Key (MetodosPago_MetodoPagoID) References MetodosPago (MetodoPagoID),
+);
+
+-- Crear la tabla Extractos Bancarios
+CREATE TABLE ExtractosBancarios (
+    ID_ExtractoBancario INT PRIMARY KEY,
+    Fecha DATE,
+    Banco VARCHAR(100),
+    SaldoInicial DECIMAL(10, 2),
+    SaldoFinal DECIMAL(10, 2),
+    DescripcionTransacciones TEXT,
+    PagosClientes_ID_PagoCliente INT,
+    TransaccionesConciliadas_ID_TransaccionConciliada INT,
+    EntidadBancaria_BancoID INT,
+    Foreign Key (PagosClientes_ID_PagoCliente) References PagosClientes(ID_PagoCliente),
+    Foreign Key (TransaccionesConciliadas_ID_TransaccionConciliada) References TransaccionesConciliadas(ID_TransaccionConciliada),
+    Foreign Key (EntidadBancaria_BancoID) References EntidadBancaria(BancoID),
+);
